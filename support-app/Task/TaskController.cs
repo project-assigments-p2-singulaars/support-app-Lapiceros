@@ -35,6 +35,36 @@ namespace support_app.Task
             await _context.SaveChangesAsync();
             return Ok(newTask);
         }
+
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult> UpdateTask(int id, [FromBody] Task task)
+        {
+            var modifiedTask = await _context.Tasks.FindAsync(id);
+            if (modifiedTask == null)
+            {
+                return NotFound();
+            }
+
+            modifiedTask.Name = task.Name;
+            modifiedTask.Description = task.Description;
+            modifiedTask.Status = task.Status;
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> DeleteTask(int id)
+        {
+            var taskToDelete = await _context.Tasks.FindAsync(id);
+            if (taskToDelete == null)
+            {
+                return NotFound();
+            }
+
+            _context.Tasks.Remove(taskToDelete);
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
         
     }
 }
