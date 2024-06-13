@@ -1,3 +1,5 @@
+using System.Security.Cryptography.X509Certificates;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,10 +12,14 @@ namespace support_app.Projects
     public class ProjectController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
+        private readonly IProjectRepository _projectRepository;
 
-        public ProjectController(AppDbContext context)
+        public ProjectController(AppDbContext context, IProjectRepository projectRepository, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
+            _projectRepository = projectRepository;
         }
 
         [HttpGet]
@@ -23,27 +29,32 @@ namespace support_app.Projects
             return Ok(projects);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<ProjectDto>> CreateProject(IProjectRepository repository,
-            CreateProjectDto projectDto)
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<List<ProjectDto>>> GetIdProject(int id)
         {
-            var project = await repository.CreateProject(projectDto);
+            var project = await _context.Projects.FindAsync(id);
+            if (project == null)
+            {
+                return NotFound();
+
+            }
+
+            return Ok(project);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateProject(CreateProjectDto createProjectDto)
+        {
+            var project = _mapper.Map<Project>(createProjectDto);
+            await _projectRepository.CreateProject(project);
             return Ok(project);
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> UpdateProject(int id,[FromBody]Project project )
+        public async Task<ActionResult> UpdateProduct([FromBody]CreateProjectDto updateProjectDto)
         {
-            var modifiedProject = await _context.Projects.FindAsync(id);
-            if (modifiedProject == null )
-            {
-                return NotFound();
-            }
-
-            modifiedProject.Name = project.Name;
-            modifiedProject.Description = project.Description;
-            modifiedProject.EndDateTime = project.EndDateTime;
-            await _context.SaveChangesAsync();
+            var project = _mapper.Map<Project>(updateProjectDto);
+            await _projectRepository.UpdateProject(project);
             return NoContent();
         }
 
