@@ -1,3 +1,5 @@
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.EntityFrameworkCore;
 using support_app.Data;
 
 namespace support_app.Persons;
@@ -11,15 +13,32 @@ public class WorkersRepository : IWorkersRepository
       _context = context;
    }
 
-   public async Task<Worker> CreateWorker(CreateWorkerDto workerDto)
+
+   public async Task<List<Worker>> GetAllWorkers()
    {
-      var worker = new Worker
-      {
-         Name = workerDto.Name,
-         Rol = workerDto.Rol
-      };
-      _context.Add(worker);
+      return await _context.Workers.ToListAsync();
+   }
+
+   public async Task<string> CreateWorker(Worker workerDto)
+   {
+      _context.Add(workerDto);
       await _context.SaveChangesAsync();
-      return worker;
+      return workerDto.Name;
+   }
+
+   public async Task UpdateWorker(Worker worker)
+   {
+      _context.Update(worker);
+      await _context.SaveChangesAsync();
+   }
+
+   public async Task<bool> ExistWorker(int id)
+   {
+      return await _context.Workers.AnyAsync(x => x.Id == id);
+   }
+
+   public async Task DeleteWorker(int id)
+   {
+      await _context.Workers.Where(x => x.Id == id).ExecuteDeleteAsync();
    }
 }

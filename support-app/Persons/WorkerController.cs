@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using support_app.Data;
@@ -9,28 +10,33 @@ namespace support_app.Persons
     public class WorkerController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
+        private readonly IWorkersRepository _workersRepository;
 
-        public WorkerController(AppDbContext context)
+        public WorkerController(AppDbContext context, IMapper mapper, IWorkersRepository workersRepository)
         {
             _context = context;
+            _mapper = mapper;
+            _workersRepository = workersRepository;
         }
 
         [HttpGet]
         public async Task<ActionResult<List<Worker>>> GetAllWorkers()
         {
-            var workers = await _context.Workers.ToListAsync();
+            var workers = await _workersRepository.GetAllWorkers();
             return Ok(workers);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Worker>> CreateWorker(IWorkersRepository repository, CreateWorkerDto workerDto)
+        public async Task<IActionResult> CreateWorker(CreateWorkerDto workerDto)
         {
-            var worker = await repository.CreateWorker(workerDto);
+            var worker = _mapper.Map<Worker>(workerDto);
+            await _workersRepository.CreateWorker(worker);
             return Ok(worker);
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> UpdateWorker(int id, [FromBody] Worker worker)
+        public async Task<ActionResult> UpdateWorker(int id, [FromBody] CreateWorkerDto worker)
         {
             var modifiedWorker = await _context.Workers.FindAsync(id);
             if (modifiedWorker == null)
@@ -38,10 +44,9 @@ namespace support_app.Persons
                 return NotFound();
             }
 
-            modifiedWorker.Name = worker.Name;
-            modifiedWorker.Rol = worker.Rol;
-            await _context.SaveChangesAsync();
-            return NoContent();
+            _mapper.Map(worker, modifiedWorker);
+            await _workersRepository.UpdateWorker(modifiedWorker);
+            return Ok(modifiedWorker);
         }
 
         [HttpDelete("{id:int}")]
@@ -53,8 +58,7 @@ namespace support_app.Persons
                 return NotFound();
             }
 
-            _context.Workers.Remove(deletedWorker);
-            await _context.SaveChangesAsync();
+            await _workersRepository.DeleteWorker(deletedWorker.Id);
             return NoContent();
         }
         

@@ -1,6 +1,4 @@
-using System.Security.Cryptography.X509Certificates;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using support_app.Data;
@@ -25,7 +23,7 @@ namespace support_app.Projects
         [HttpGet]
         public async Task<ActionResult<List<ProjectDto>>> GetAllProjects()
         {
-            var projects = await _context.Projects.ToListAsync();
+            var projects = await _projectRepository.GetAllProjects();
             return Ok(projects);
         }
 
@@ -51,11 +49,18 @@ namespace support_app.Projects
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> UpdateProduct([FromBody]CreateProjectDto updateProjectDto)
+        public async Task<ActionResult> UpdateProduct(int id,[FromBody]CreateProjectDto createProjectDto)
         {
-            var project = _mapper.Map<Project>(updateProjectDto);
+
+            var project = await _context.Projects.FindAsync(id);
+            if (project == null)
+            {
+                return NotFound();
+            }
+
+            _mapper.Map(createProjectDto, project);
             await _projectRepository.UpdateProject(project);
-            return NoContent();
+            return Ok(project); 
         }
 
         [HttpDelete("{id:int}")]
@@ -66,9 +71,7 @@ namespace support_app.Projects
             {
                 return NotFound();
             }
-
-            _context.Projects.Remove(project);
-            await _context.SaveChangesAsync();
+            await _projectRepository.Delete(project.Id);
             return NoContent();
         }
         

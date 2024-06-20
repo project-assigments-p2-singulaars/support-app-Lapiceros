@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using support_app.Data;
 using support_app.Persons;
 using support_app.Projects;
+using support_app.Tasks.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IWorkersRepository, WorkersRepository>();
+builder.Services.AddScoped<IDutyRepository, DutyRepository>();
 
 
 

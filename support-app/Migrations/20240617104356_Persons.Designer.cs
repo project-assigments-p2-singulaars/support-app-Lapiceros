@@ -12,7 +12,7 @@ using support_app.Data;
 namespace support_app.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240611134357_Persons")]
+    [Migration("20240617104356_Persons")]
     partial class Persons
     {
         /// <inheritdoc />
@@ -36,9 +36,6 @@ namespace support_app.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Rol")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -70,30 +67,6 @@ namespace support_app.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Projects");
-                });
-
-            modelBuilder.Entity("support_app.Task.Task", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Tasks");
                 });
 #pragma warning restore 612, 618
         }

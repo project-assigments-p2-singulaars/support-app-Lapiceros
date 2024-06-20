@@ -16,8 +16,7 @@ public class ProjectRepository : IProjectRepository
     {
         return await _context.Projects.ToListAsync();
     }
-
-
+    
     public async Task<int> CreateProject(Project projectDto)
     {
         _context.Add(projectDto);
@@ -27,6 +26,7 @@ public class ProjectRepository : IProjectRepository
 
     public async Task UpdateProject(Project project)
     {
+        
         _context.Update(project);
         await _context.SaveChangesAsync();
     }
