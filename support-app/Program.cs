@@ -20,6 +20,14 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Allowlocalhost4200", policyBuilder =>
+    {
+        policyBuilder.WithOrigins("http://localhost:4200")
+            .AllowAnyMethod().AllowCredentials();
+    });
+});
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IWorkersRepository, WorkersRepository>();
 builder.Services.AddScoped<IDutyRepository, DutyRepository>();
@@ -36,6 +44,7 @@ if (app.Environment.IsDevelopment())
     builder.Configuration.AddUserSecrets<Program>();
 }
 
+app.UseCors("Allowlocalhost4200");
 app.MapControllers();
 app.UseHttpsRedirection();
 

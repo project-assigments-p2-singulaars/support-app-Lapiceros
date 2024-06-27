@@ -1,3 +1,5 @@
+using support_app.Tasks;
+
 namespace support_app.Projects;
 
 public class ProjectDto
@@ -7,4 +9,6 @@ public class ProjectDto
     public string Description { get; set; }
     public DateTime InitDate { get; set; }
     public DateTime? EndDateTime { get; set; }
+    
+    public List<Duty> SupportTask { get; set; } = new List<Duty>();
 }

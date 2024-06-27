@@ -1,7 +1,5 @@
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using support_app.Data;
 using support_app.Tasks.Repository;
 
@@ -32,7 +30,7 @@ namespace support_app.Tasks
         [HttpGet("{id:int}")]
         public async Task<ActionResult<List<DutyDto>>> GetIdTask(int id)
         {
-            var task = await _context.Duties.FindAsync(id);
+            var task = await _dutyRepository.ExistTask(id);
             if (task == null)
             {
                 return NotFound();

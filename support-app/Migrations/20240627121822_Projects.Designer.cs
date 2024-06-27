@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using support_app.Data;
 
@@ -11,9 +12,11 @@ using support_app.Data;
 namespace support_app.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240627121822_Projects")]
+    partial class Projects
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,13 +37,7 @@ namespace support_app.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TaskId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("TaskId")
-                        .IsUnique();
 
                     b.ToTable("Workers");
                 });
@@ -123,17 +120,6 @@ namespace support_app.Migrations
                     b.ToTable("Duties");
                 });
 
-            modelBuilder.Entity("support_app.Persons.Worker", b =>
-                {
-                    b.HasOne("support_app.Tasks.Duty", "TaskAssigned")
-                        .WithOne("Worker")
-                        .HasForeignKey("support_app.Persons.Worker", "TaskId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("TaskAssigned");
-                });
-
             modelBuilder.Entity("support_app.Tasks.Duty", b =>
                 {
                     b.HasOne("support_app.Projects.Project", "Project")
@@ -148,12 +134,6 @@ namespace support_app.Migrations
             modelBuilder.Entity("support_app.Projects.Project", b =>
                 {
                     b.Navigation("SupportTask");
-                });
-
-            modelBuilder.Entity("support_app.Tasks.Duty", b =>
-                {
-                    b.Navigation("Worker")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

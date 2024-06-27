@@ -12,8 +12,8 @@ using support_app.Data;
 namespace support_app.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240620071548_Tasks")]
-    partial class Tasks
+    [Migration("20240627124328_relationWorkersTasks")]
+    partial class relationWorkersTasks
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,7 +37,13 @@ namespace support_app.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("TaskId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("TaskId")
+                        .IsUnique();
 
                     b.ToTable("Workers");
                 });
@@ -52,7 +58,8 @@ namespace support_app.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<DateTime?>("EndDateTime")
                         .HasColumnType("datetime2");
@@ -62,20 +69,39 @@ namespace support_app.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Projects");
                 });
 
-            modelBuilder.Entity("support_app.Tasks.Duty", b =>
+            modelBuilder.Entity("support_app.Role.Role", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("support_app.Tasks.Duty", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -89,11 +115,48 @@ namespace support_app.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.ToTable("Duties");
+                });
+
+            modelBuilder.Entity("support_app.Persons.Worker", b =>
+                {
+                    b.HasOne("support_app.Tasks.Duty", "TaskAssigned")
+                        .WithOne("Worker")
+                        .HasForeignKey("support_app.Persons.Worker", "TaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TaskAssigned");
+                });
+
+            modelBuilder.Entity("support_app.Tasks.Duty", b =>
+                {
+                    b.HasOne("support_app.Projects.Project", "Project")
+                        .WithMany("SupportTask")
+                        .HasForeignKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("support_app.Projects.Project", b =>
+                {
+                    b.Navigation("SupportTask");
+                });
+
+            modelBuilder.Entity("support_app.Tasks.Duty", b =>
+                {
+                    b.Navigation("Worker")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

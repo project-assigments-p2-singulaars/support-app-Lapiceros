@@ -1,6 +1,5 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using support_app.Data;
 
 namespace support_app.Projects
@@ -21,16 +20,17 @@ namespace support_app.Projects
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ProjectDto>>> GetAllProjects()
+        public async Task<ActionResult<IEnumerable<ProjectDto>>> GetAllProjects()
         {
             var projects = await _projectRepository.GetAllProjects();
-            return Ok(projects);
+            var projectsDto = _mapper.Map<IEnumerable<Project>>(projects);
+            return Ok(projectsDto);
         }
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<List<ProjectDto>>> GetIdProject(int id)
         {
-            var project = await _context.Projects.FindAsync(id);
+            var project = await _projectRepository.ExistProject(id);
             if (project == null)
             {
                 return NotFound();

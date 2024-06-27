@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
-
 namespace support_app.Persons;
 
 public interface IWorkersRepository

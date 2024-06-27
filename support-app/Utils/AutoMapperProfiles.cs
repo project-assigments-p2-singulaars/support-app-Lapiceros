@@ -1,6 +1,7 @@
 using AutoMapper;
 using support_app.Persons;
 using support_app.Projects;
+using support_app.Role;
 using support_app.Tasks;
 
 namespace support_app.Utils;
@@ -23,6 +24,11 @@ public class AutoMapperProfiles : Profile
         CreateMap<CreateDutyDto, Duty>();
         CreateMap<CreateDutyDto, DutyDto>();
         CreateMap<Duty, CreateDutyDto>();
+
+        CreateMap<Role.Role, RoleDto>();
+        CreateMap<CreateRoleDto, Role.Role>();
+        CreateMap<CreateRoleDto, RoleDto>();
+        CreateMap<Role.Role, CreateRoleDto>();
 
     }
     
