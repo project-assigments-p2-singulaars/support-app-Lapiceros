@@ -12,8 +12,8 @@ using support_app.Data;
 namespace support_app.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240627121822_Projects")]
-    partial class Projects
+    [Migration("20240701164609_relationTaskProject")]
+    partial class relationTaskProject
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,7 +37,15 @@ namespace support_app.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("TaskAssignedId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TaskId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("TaskAssignedId");
 
                     b.ToTable("Workers");
                 });
@@ -95,7 +103,10 @@ namespace support_app.Migrations
             modelBuilder.Entity("support_app.Tasks.Duty", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -112,21 +123,32 @@ namespace support_app.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("ProjectId")
+                    b.Property<int?>("ProjectId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ProjectId");
+
                     b.ToTable("Duties");
+                });
+
+            modelBuilder.Entity("support_app.Persons.Worker", b =>
+                {
+                    b.HasOne("support_app.Tasks.Duty", "TaskAssigned")
+                        .WithMany()
+                        .HasForeignKey("TaskAssignedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TaskAssigned");
                 });
 
             modelBuilder.Entity("support_app.Tasks.Duty", b =>
                 {
                     b.HasOne("support_app.Projects.Project", "Project")
                         .WithMany("SupportTask")
-                        .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProjectId");
 
                     b.Navigation("Project");
                 });

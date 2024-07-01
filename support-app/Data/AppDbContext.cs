@@ -16,14 +16,16 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<Project>()
-            .HasMany(pr => pr.SupportTask)
-            .WithOne(sp => sp.Project)
-            .HasForeignKey(sp => sp.Id);
-        
+            .HasMany(e => e.SupportTask)
+            .WithOne(e => e.Project)
+            .HasForeignKey(e => e.ProjectId)
+            .IsRequired(false);
+
         modelBuilder.Entity<Duty>()
-            .HasOne(pr => pr.Worker)
-            .WithOne(sp => sp.TaskAssigned)
-            .HasForeignKey<Worker>(sp => sp.TaskId);
+            .HasOne(e => e.Worker)
+            .WithOne(e => e.TaskAssigned)
+            .HasForeignKey<Worker>(e => e.TaskId)
+            .IsRequired(false);
     }
 
 }

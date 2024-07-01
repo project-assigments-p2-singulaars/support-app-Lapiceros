@@ -13,7 +13,8 @@ public class Duty
     public DateTime InitDate { get; set; }
     public DateTime? EndDate { get; set; } = null!;
     
-    public int ProjectId { get; set; }
-    public Project Project { get; set; } = null!;
-    public Worker Worker { get; set; } = null!;
+    public int? ProjectId { get; set; }
+    public Project? Project { get; set; } = null!;
+    public Worker? Worker { get; set; }
+    
 }

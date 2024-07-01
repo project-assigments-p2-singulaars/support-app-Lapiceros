@@ -12,8 +12,8 @@ using support_app.Data;
 namespace support_app.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240627124328_relationWorkersTasks")]
-    partial class relationWorkersTasks
+    [Migration("20240701184757_relationTaskWorker")]
+    partial class relationTaskWorker
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,13 +37,14 @@ namespace support_app.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TaskId")
+                    b.Property<int?>("TaskId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("TaskId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[TaskId] IS NOT NULL");
 
                     b.ToTable("Workers");
                 });
@@ -101,7 +102,10 @@ namespace support_app.Migrations
             modelBuilder.Entity("support_app.Tasks.Duty", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -118,10 +122,12 @@ namespace support_app.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("ProjectId")
+                    b.Property<int?>("ProjectId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
 
                     b.ToTable("Duties");
                 });
@@ -130,9 +136,7 @@ namespace support_app.Migrations
                 {
                     b.HasOne("support_app.Tasks.Duty", "TaskAssigned")
                         .WithOne("Worker")
-                        .HasForeignKey("support_app.Persons.Worker", "TaskId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("support_app.Persons.Worker", "TaskId");
 
                     b.Navigation("TaskAssigned");
                 });
@@ -141,9 +145,7 @@ namespace support_app.Migrations
                 {
                     b.HasOne("support_app.Projects.Project", "Project")
                         .WithMany("SupportTask")
-                        .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProjectId");
 
                     b.Navigation("Project");
                 });
@@ -155,8 +157,7 @@ namespace support_app.Migrations
 
             modelBuilder.Entity("support_app.Tasks.Duty", b =>
                 {
-                    b.Navigation("Worker")
-                        .IsRequired();
+                    b.Navigation("Worker");
                 });
 #pragma warning restore 612, 618
         }

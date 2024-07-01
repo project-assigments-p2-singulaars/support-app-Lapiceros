@@ -40,7 +40,7 @@ namespace support_app.Tasks
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateTask(Duty dutydto)
+        public async Task<IActionResult> CreateTask(CreateDutyDto dutydto)
         {
             var task = _mapper.Map<Duty>(dutydto);
             await _dutyRepository.CreateTask(task);
