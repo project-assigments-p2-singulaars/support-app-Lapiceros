@@ -1,9 +1,11 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using support_app.Data;
 
 namespace support_app.Persons
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class WorkerController : ControllerBase

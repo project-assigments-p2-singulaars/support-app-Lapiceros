@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using support_app.joinTable;
 using support_app.Persons;
 using support_app.Projects;
 using support_app.Tasks;
@@ -20,17 +21,34 @@ public class AppDbContext : IdentityDbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.Entity<Project>()
-            .HasMany(e => e.SupportTask)
-            .WithOne(e => e.Project)
-            .HasForeignKey(e => e.ProjectId)
-            .IsRequired(false);
-    
+        
+        modelBuilder.Entity<ProjectWorkerRol>()
+            .HasKey(item => new { item.ProjectId, item.WorkerId, item.RoleId });
+        
+        modelBuilder.Entity<ProjectWorkerRol>()
+            .HasOne(item => item.Project)
+            .WithMany(x => x.ProjectWorkerRoles)
+            .HasForeignKey(x => x.ProjectId);
+
+        modelBuilder.Entity<ProjectWorkerRol>()
+            .HasOne(item => item.Worker)
+            .WithMany(x => x.ProjectWorkerRoles)
+            .HasForeignKey(x => x.WorkerId);
+
+        modelBuilder.Entity<ProjectWorkerRol>()
+            .HasOne(item => item.Role)
+            .WithMany(x => x.ProjectWorkerRoles)
+            .HasForeignKey(x => x.RoleId);
+
         modelBuilder.Entity<Duty>()
-            .HasOne(e => e.Worker)
-            .WithOne(e => e.TaskAssigned)
-            .HasForeignKey<Worker>(e => e.TaskId)
-            .IsRequired(false);
+            .HasOne(item => item.Project)
+            .WithMany(x => x.SupportTask)
+            .HasForeignKey(x => x.ProjectId);
+
+        modelBuilder.Entity<Duty>()
+            .HasOne(item => item.Worker)
+            .WithMany(x => x.Tasks)
+            .HasForeignKey(x => x.WorkerId);
     }
 
 }

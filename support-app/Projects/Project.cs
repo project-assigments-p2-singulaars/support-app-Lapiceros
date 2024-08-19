@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using support_app.joinTable;
 using support_app.Tasks;
 
 namespace support_app.Projects;
@@ -14,4 +15,5 @@ public class Project
     public DateTime? EndDateTime { get; set; } = null!;
     
     public ICollection<Duty> SupportTask { get; set; } = new List<Duty>();
+    public ICollection<ProjectWorkerRol> ProjectWorkerRoles { get; set; }
 }
