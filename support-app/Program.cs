@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using support_app.Data;
@@ -18,6 +19,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddIdentityApiEndpoints<IdentityUser>().AddEntityFrameworkStores<AppDbContext>();
+builder.Services.AddAuthorization();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddCors(options =>
@@ -44,6 +47,7 @@ if (app.Environment.IsDevelopment())
     builder.Configuration.AddUserSecrets<Program>();
 }
 
+app.MapIdentityApi<IdentityUser>();
 app.UseCors("Allowlocalhost4200");
 app.MapControllers();
 app.UseHttpsRedirection();

@@ -3,7 +3,7 @@ using support_app.Data;
 
 namespace support_app.Role.Repository;
 
-public class RoleRepository
+public class RoleRepository : IRoleRepository
 {
     private readonly AppDbContext _context;
 

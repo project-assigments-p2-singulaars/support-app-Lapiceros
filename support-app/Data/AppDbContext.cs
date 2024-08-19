@@ -2,11 +2,16 @@
 using support_app.Persons;
 using support_app.Projects;
 using support_app.Tasks;
+using IdentityDbContext = Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityDbContext;
 
 namespace support_app.Data;
 
-public class AppDbContext(DbContextOptions options) : DbContext(options)
+public class AppDbContext : IdentityDbContext
 {
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+    {
+        
+    }
     public DbSet<Project> Projects { get; set; }
     public DbSet<Worker> Workers { get; set; }
     public DbSet<Duty> Duties { get; set; }
@@ -20,7 +25,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
             .WithOne(e => e.Project)
             .HasForeignKey(e => e.ProjectId)
             .IsRequired(false);
-
+    
         modelBuilder.Entity<Duty>()
             .HasOne(e => e.Worker)
             .WithOne(e => e.TaskAssigned)
