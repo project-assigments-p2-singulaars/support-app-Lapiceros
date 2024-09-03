@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using support_app.Data;
 using support_app.Role.Repository;
@@ -7,6 +8,7 @@ namespace support_app.Role
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class RoleController : ControllerBase
     {
         private readonly AppDbContext _context;
