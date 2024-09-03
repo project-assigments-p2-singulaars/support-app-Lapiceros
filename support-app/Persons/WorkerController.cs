@@ -5,9 +5,10 @@ using support_app.Data;
 
 namespace support_app.Persons
 {
-    [Authorize]
+    
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class WorkerController : ControllerBase
     {
         private readonly AppDbContext _context;

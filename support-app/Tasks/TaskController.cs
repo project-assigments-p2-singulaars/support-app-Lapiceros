@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using support_app.Data;
 using support_app.Tasks.Repository;
@@ -7,6 +8,7 @@ namespace support_app.Tasks
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TaskController : ControllerBase
     {
         private readonly AppDbContext _context;
